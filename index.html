@@ -397,3 +397,60 @@ footer .btns{display:flex;gap:8px;flex-wrap:wrap}
           <p class="small muted" style="margin:0 0 8px">One line about the session. Mood, market, what you noticed.</p>
           <div class="journal">
             <textarea id="journalText" maxlength="500" placeholder="e.g. Gold choppy into London open. Waited, took one clean setup."></textarea>
+          </div>
+          <p class="small muted" id="journalSaved" style="margin:8px 0 0">Saved on this device as you type.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="guides">
+  <div class="wrap">
+    <div class="sec-head"><h2>Six rules worth taping to the wall</h2></div>
+    <p class="helper">Tap a card to read the plain version. None of these is a tip about what to buy — they are about how to behave.</p>
+    <div class="guides" id="guidesGrid"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="band">
+      <img src="tradekit-flatlay.webp" alt="An open trading journal with notes, a pencil and a cup of chai">
+      <div class="band-veil"></div>
+      <div class="band-text">
+        <div class="kicker" style="color:#d9a441">Weekly review</div>
+        <h2>Sunday, ten minutes, honest answers.</h2>
+        <p>Open the ledger, read your notes, and ask: did I follow my plan? The journal only works if you look back at it.</p>
+        <button class="btn btn-gold" id="btnReview" type="button">Copy my week in words</button>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <div>
+        <b class="serif" style="font-size:17px;color:var(--ink)">TradeKit</b>
+        <p style="margin:6px 0 0;max-width:560px">A private journal, not advice. TradeKit never tells you what to buy or sell, and your trades never leave this device. P&amp;L is worked out from the prices you type; check it against your broker before you trust it.</p>
+      </div>
+      <div class="btns">
+        <button class="btn btn-ghost btn-sm" id="copySummary" type="button">Copy summary</button>
+        <button class="btn btn-ghost btn-sm" id="removeSamples" type="button">Remove sample trades</button>
+        <button class="btn btn-terra btn-sm" id="eraseAll" type="button">Erase everything</button>
+      </div>
+    </div>
+    <p style="margin-top:18px">Made for one trader's desk. Sample trades are marked and can be removed in one tap.</p>
+  </div>
+</footer>
+
+<div id="drawer" role="dialog" aria-modal="true" aria-label="Trade details">
+  <div class="drawer-veil" id="drawerVeil"></div>
+  <div class="drawer-card">
+    <button class="btn btn-ghost btn-sm" id="drawerClose" type="button">Close</button>
+    <div id="drawerBody"></div>
+  </div>
+</div>
+
+<div id="toast" role="status"></div>
