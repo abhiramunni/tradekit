@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeKit — Your Trading Journal &amp; Risk Desk</title>
+<meta name="description" content="A calm trading journal: log every trade, see your real win rate and profit factor, and size every position from the risk you choose. No tips, no signals — just your own record.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650;9..144,800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#faf3e7; --paper2:#f3e8d3; --card:#fffdf7; --ink:#2b1d12; --ink2:#5c4632;
+  --mut:#8a7360; --line:#e6d9c2; --line2:#d9c6a4; --bronze:#b07d2b; --gold:#d9a441;
+  --gold-soft:#f6e3bd; --gold-deep:#8a6414; --terra:#c05b2e; --terra-d:#9c4520; --terra-soft:#f9e2d4;
+  --night:#3a2c22; --night2:#241a12;
+  --shadow:0 10px 30px rgba(43,29,18,.10); --shadow-lg:0 24px 60px rgba(43,29,18,.18);
+  --r:18px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.serif{font-family:Fraunces,Georgia,serif;font-weight:650;letter-spacing:-.01em}
+a{color:var(--terra-d)}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:15px;color:var(--ink)}
+img{max-width:100%;display:block}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.kicker{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--bronze)}
+.muted{color:var(--mut)}
+.small{font-size:13px}
+.num{font-variant-numeric:tabular-nums}
+.win{color:var(--gold-deep)}
+.loss{color:var(--terra-d)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em}
+.pill.win{background:var(--gold-soft);color:var(--gold-deep)}
+.pill.loss{background:var(--terra-soft);color:var(--terra-d)}
+.pill.open{background:#efe7d6;color:var(--ink2)}
+.pill.long{background:var(--gold-soft);color:var(--gold-deep)}
+.pill.short{background:var(--terra-soft);color:var(--terra-d)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:12px 20px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:linear-gradient(135deg,#d9a441,#b07d2b);color:#fff;box-shadow:0 8px 20px rgba(176,125,43,.35)}
+.btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line2)}
+.btn-terra{background:var(--terra);color:#fff}
+.btn-sm{padding:8px 14px;font-size:13px}
+/* ---------- cinematic intro ---------- */
+#intro{position:fixed;inset:0;z-index:90;background:radial-gradient(120% 120% at 50% 0%,#4a3520 0%,#241a12 55%,#171008 100%);color:#f6e3bd;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;transition:opacity .6s ease}
+#intro.hide{opacity:0;pointer-events:none}
+.intro-mark{width:92px;height:92px;border-radius:50%;border:2px solid #d9a441;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:38px;font-weight:800;color:#d9a441;animation:markIn 1s cubic-bezier(.2,.8,.2,1) both,ringPulse 2.4s ease-in-out 1s infinite}
+@keyframes markIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes ringPulse{0%,100%{box-shadow:0 0 0 0 rgba(217,164,65,.45)}50%{box-shadow:0 0 0 16px rgba(217,164,65,0)}}
+.intro-title{font-family:Fraunces,serif;font-size:52px;font-weight:800;color:#faf3e7;margin:22px 0 6px;animation:rise .9s .25s cubic-bezier(.2,.8,.2,1) both}
+.intro-tag{font-size:16px;color:#d9c8a8;animation:rise .9s .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}
+.intro-bar{width:min(280px,70vw);height:3px;background:rgba(217,164,65,.25);border-radius:99px;margin-top:34px;overflow:hidden;animation:rise .9s .7s both}
