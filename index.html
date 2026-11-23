@@ -800,3 +800,48 @@ function summaryText(){
   });
   return lines.join('\n');
 }
+
+function copyText(txt,msg){
+  function done(){toast(msg);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done,function(){fallbackCopy(txt);done();});
+  }else{fallbackCopy(txt);done();}
+}
+function fallbackCopy(txt){
+  try{
+    var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+  }catch(e){}
+}
+var cs=$('#copySummary'),cst=$('#copySummaryTop');
+if(cs)cs.addEventListener('click',function(){copyText(summaryText(),'Summary copied.');});
+if(cst)cst.addEventListener('click',function(){copyText(summaryText(),'Summary copied.');});
+var br=$('#btnReview');
+if(br)br.addEventListener('click',function(){copyText(summaryText(),'Your week in words \u2014 copied. Paste it into your notes.');});
+var rs=$('#removeSamples');
+if(rs)rs.addEventListener('click',function(){
+  var before=state.trades.length;
+  state.trades=state.trades.filter(function(t){return !t.sample;});
+  save();renderAll();
+  toast(before-state.trades.length>0?'Sample trades removed. Your own trades stay.':'No sample trades left to remove.');
+});
+var ea=$('#eraseAll');
+if(ea)ea.addEventListener('click',function(){
+  if(ea.getAttribute('data-armed')!=='1'){
+    ea.setAttribute('data-armed','1');ea.textContent='Tap again to erase everything';
+    setTimeout(function(){ea.removeAttribute('data-armed');ea.textContent='Erase everything';},3500);
+    return;
+  }
+  state.trades=[];state.checks={};state.journal={};save();renderAll();
+  ea.removeAttribute('data-armed');ea.textContent='Erase everything';
+  toast('Everything erased. A fresh journal, ready when you are.');
+});
+/* ---------- init ---------- */
+function renderAll(){renderStats();renderEquity();renderLedger();renderChecks();calcRisk();}
+renderAll();
+window.TradeKit={state:state,stats:stats,pnl:pnl,rMult:rMult,calcRisk:calcRisk,summaryText:summaryText,SEEDS:SEEDS};
+})();
+</script>
+</body>
+</html>
