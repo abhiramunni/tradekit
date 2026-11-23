@@ -283,3 +283,60 @@ footer .btns{display:flex;gap:8px;flex-wrap:wrap}
 
 <section>
   <div class="wrap">
+    <div class="sec-head"><h2>Your desk at a glance</h2></div>
+    <p class="helper">These numbers come only from the trades you log here. Nothing is advice — it is your own record, honestly counted.</p>
+    <div class="stats">
+      <div class="card stat"><div class="lbl">Net P&amp;L</div><div class="val num" id="stNet">—</div><div class="sub">Closed trades only</div></div>
+      <div class="card stat"><div class="lbl">Win rate</div><div class="val num" id="stWin">—</div><div class="sub" id="stWinSub">—</div></div>
+      <div class="card stat"><div class="lbl">Profit factor</div><div class="val num" id="stPF">—</div><div class="sub">Gross wins ÷ gross losses</div></div>
+      <div class="card stat"><div class="lbl">Average R</div><div class="val num" id="stAvgR">—</div><div class="sub">P&amp;L per unit of risk</div></div>
+      <div class="card stat"><div class="lbl">Trades logged</div><div class="val num" id="stTrades">—</div><div class="sub" id="stTradesSub">—</div></div>
+      <div class="card stat"><div class="lbl">Current streak</div><div class="val num" id="stStreak">—</div><div class="sub" id="stStreakSub">Latest closed trade first</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="card eq-wrap">
+      <div class="eq-top">
+        <div>
+          <div class="kicker">Equity curve</div>
+          <div class="big num" id="eqBig">—</div>
+        </div>
+        <div class="muted small" id="eqCaption">Cumulative profit or loss, trade by trade.</div>
+      </div>
+      <canvas id="eqCanvas" width="1000" height="220" aria-label="Equity curve chart"></canvas>
+      <p class="small muted" style="margin:10px 0 0">The gold line is your running total after each closed trade. Flat stretches mean you were patient — or away. Both are fine.</p>
+    </div>
+  </div>
+</section>
+<section id="ledger">
+  <div class="wrap">
+    <div class="sec-head"><h2>The ledger</h2></div>
+    <p class="helper">Tap any trade to see the full story — entry, exit, stop, target and the note you wrote yourself. Leave the exit blank and a trade stays open.</p>
+    <div class="ledger-tools" role="group" aria-label="Filter trades">
+      <button class="chip on" data-filter="all" type="button">All trades</button>
+      <button class="chip" data-filter="win" type="button">Wins</button>
+      <button class="chip" data-filter="loss" type="button">Losses</button>
+      <button class="chip" data-filter="open" type="button">Open</button>
+      <span class="ledger-count" id="tradeCount">—</span>
+    </div>
+    <div class="card">
+      <div class="ledger-scroll">
+        <table class="ledger">
+          <thead><tr><th>Date</th><th>Trade</th><th>Entry → Exit</th><th>Size</th><th>R</th><th style="text-align:right">P&amp;L</th></tr></thead>
+          <tbody id="ledgerBody"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="ledgerEmpty" hidden>No trades match this filter yet.</div>
+    </div>
+
+    <div class="card add-panel" id="addPanel">
+      <h3>Log a trade</h3>
+      <p class="small muted" style="margin:0">Ten seconds now saves you ten confused minutes later. Leave the exit empty if the trade is still open.</p>
+      <form id="addForm" novalidate>
+        <div class="form-grid">
+          <div class="field"><label for="fDate">Date</label><input id="fDate" type="date" required></div>
+          <div class="field"><label for="fSymbol">Symbol</label><input id="fSymbol" type="text" value="XAUUSD" maxlength="12" required></div>
+          <div class="field"><label>Direction</label>
