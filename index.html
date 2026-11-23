@@ -454,3 +454,60 @@ footer .btns{display:flex;gap:8px;flex-wrap:wrap}
 </div>
 
 <div id="toast" role="status"></div>
+<script>
+(function(){
+'use strict';
+var LS_KEY='tradekit-v1';
+var CHECKS=[
+ 'I checked the higher-timeframe trend before trading',
+ 'My stop-loss is set before I enter',
+ 'This trade risks 1% or less of my account',
+ 'I am trading my plan, not chasing a move',
+ 'I wrote down why I am taking this trade',
+ 'I will not move my stop further away'
+];
+var GUIDES=[
+ {t:'Risk first, always',s:'Decide what you can lose before you dream about winning.',m:'Pick your stop-loss first, then your size. If the stop is far away, the size is small. A trade you cannot afford to lose is a trade you should not take.'},
+ {t:'One setup at a time',s:'A trader with one good setup beats a trader with ten half-learned ones.',m:'Write down the one setup you trade best — for example, a pullback into the higher-timeframe trend. Trade only that for a month and see what the journal says.'},
+ {t:'Write the why, not just the numbers',s:'Entry and exit are facts. The reason is the lesson.',m:'"H4 trend up, M15 pullback" teaches you something. "Felt good" teaches you nothing. One honest line per trade is enough.'},
+ {t:'Review every Sunday',s:'Ten minutes a week beats ten hours of regret.',m:'Open the ledger, read your notes, and ask one question: did I follow my plan? Circle the trades where the answer is no — that is where the money went.'},
+ {t:'A loss is tuition, not failure',s:'Every trader pays to learn. The journal makes sure you only pay once per lesson.',m:'A stopped-out trade that followed the plan is a good trade. A winning trade that broke the plan is a bad habit. Judge the process, not the result.'},
+ {t:'Never risk money you need',s:'Trading money is money you can watch disappear and still sleep.',m:'Rent, food, EMIs and exam fees are not trading capital. If a loss would change your life, the size is wrong — shrink it until the loss is boring.'}
+];
+var SEEDS=[
+ {id:'s1',date:'2026-11-17',symbol:'XAUUSD',dir:'Long',entry:4085.20,exit:4112.40,size:0.10,sl:4072.00,tp:4130.00,note:'London open breakout, waited for the retest.',sample:true},
+ {id:'s2',date:'2026-11-18',symbol:'XAUUSD',dir:'Short',entry:4108.50,exit:4096.10,size:0.10,sl:4118.00,tp:4085.00,note:'Rejection at yesterday\u2019s high.',sample:true},
+ {id:'s3',date:'2026-11-19',symbol:'XAUUSD',dir:'Long',entry:4120.00,exit:4101.50,size:0.10,sl:4108.00,tp:4140.00,note:'Chased the move, no retest. Lesson logged.',sample:true},
+ {id:'s4',date:'2026-11-20',symbol:'XAUUSD',dir:'Long',entry:4098.30,exit:4131.75,size:0.15,sl:4086.00,tp:4145.00,note:'H4 trend up, M15 pullback entry.',sample:true},
+ {id:'s5',date:'2026-11-21',symbol:'XAUUSD',dir:'Short',entry:4135.00,exit:4144.20,size:0.10,sl:4142.00,tp:4115.00,note:'Faded strength into resistance \u2014 stopped out.',sample:true},
+ {id:'s6',date:'2026-11-21',symbol:'XAUUSD',dir:'Long',entry:4118.60,exit:4140.10,size:0.10,sl:4109.50,tp:4155.00,note:'Second chance after the stop-out. Patient entry.',sample:true},
+ {id:'s7',date:'2026-11-23',symbol:'XAUUSD',dir:'Long',entry:4142.30,exit:null,size:0.10,sl:4130.00,tp:4165.00,note:'Open \u2014 H4 higher high, waiting.',sample:true}
+];
+function defaultState(){return {trades:SEEDS.slice(),checks:{},journal:{},seenIntro:false,seenCoach:false};}
+function load(){
+  try{
+    var raw=localStorage.getItem(LS_KEY);
+    if(!raw) return defaultState();
+    var s=JSON.parse(raw);
+    if(!s||!Array.isArray(s.trades)) return defaultState();
+    s.checks=s.checks||{}; s.journal=s.journal||{};
+    return s;
+  }catch(e){ return defaultState(); }
+}
+var state=load();
+function save(){ try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch(e){} }
+function $(s){return document.querySelector(s);}
+function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function money(n){var v=Math.abs(n);return (n<0?'\u2212$':'$')+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function signedMoney(n){return (n<0?'\u2212':'')+'$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function todayKey(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function fmtDate(ds){var d=new Date(ds+'T12:00:00');return d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});}
+function pnl(t){if(t.exit==null) return null;var d=t.dir==='Long'?(t.exit-t.entry):(t.entry-t.exit);return Math.round(d*t.size*100*100)/100;}
+function riskAmt(t){return Math.abs(t.entry-t.sl)*t.size*100;}
+function rMult(t){var p=pnl(t);if(p==null) return null;var r=riskAmt(t);if(!r) return null;return p/r;}
+function closedTrades(){return state.trades.filter(function(t){return t.exit!=null;}).sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:(a.id<b.id?-1:1);});}
+function stats(){
+  var c=closedTrades(),wins=0,gw=0,gl=0,rs=0;
+  c.forEach(function(t){var p=pnl(t);if(p>0){wins++;gw+=p;}else if(p<0){gl+= -p;}var r=rMult(t);if(r!=null) rs+=r;});
+  var net=c.reduce(function(a,t){return a+pnl(t);},0);
