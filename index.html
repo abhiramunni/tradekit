@@ -626,3 +626,61 @@ $$('.chip[data-filter]').forEach(function(ch){
     ch.classList.add('on');currentFilter=ch.getAttribute('data-filter');renderLedger();
   });
 });
+
+/* ---------- drawer ---------- */
+var drawer=$('#drawer');
+function openDrawer(id){
+  var t=null;state.trades.forEach(function(x){if(x.id===id)t=x;});
+  if(!t||!drawer)return;
+  var p=pnl(t),r=rMult(t);
+  var rows='';
+  rows+='<div class="kv"><span>Date</span><b>'+esc(fmtDate(t.date))+'</b></div>';
+  rows+='<div class="kv"><span>Symbol</span><b>'+esc(t.symbol)+'</b></div>';
+  rows+='<div class="kv"><span>Direction</span><b>'+esc(t.dir)+'</b></div>';
+  rows+='<div class="kv"><span>Entry</span><b class="num">'+Number(t.entry).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+'</b></div>';
+  rows+='<div class="kv"><span>Exit</span><b class="num">'+(t.exit==null?'Open':Number(t.exit).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}))+'</b></div>';
+  rows+='<div class="kv"><span>Size</span><b class="num">'+Number(t.size).toFixed(2)+' lots</b></div>';
+  rows+='<div class="kv"><span>Stop-loss</span><b class="num">'+Number(t.sl).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+'</b></div>';
+  rows+='<div class="kv"><span>Target</span><b class="num">'+(t.tp?Number(t.tp).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'\u2014')+'</b></div>';
+  rows+='<div class="kv"><span>Risk on the trade</span><b class="num">'+money(riskAmt(t))+'</b></div>';
+  rows+='<div class="kv"><span>P&amp;L</span><b class="num '+(p==null?'':p>0?'win':'loss')+'">'+(p==null?'\u2014 open':signedMoney(p))+'</b></div>';
+  rows+='<div class="kv"><span>R multiple</span><b class="num '+(r==null?'':r>=0?'win':'loss')+'">'+(r==null?'\u2014':(r>=0?'+':'')+r.toFixed(2)+'R')+'</b></div>';
+  var note='<p class="small" style="margin:14px 0 0"><b>Why I took it:</b> '+esc(t.note||'No note written.')+'</p>';
+  var closeForm='';
+  if(t.exit==null){
+    closeForm='<form id="closeForm" style="margin-top:18px"><div class="field"><label for="closeExit">Close this trade \u2014 exit price</label><input id="closeExit" type="number" step="0.01" placeholder="e.g. 4150.00" required></div><div class="form-actions"><button class="btn btn-gold btn-sm" type="submit">Mark closed</button></div></form>';
+  }
+  $('#drawerBody').innerHTML='<div class="kicker">'+esc(t.symbol)+' \u00b7 '+esc(t.dir)+'</div><h3>'+esc(fmtDate(t.date))+'</h3>'+(t.sample?'<p class="small muted" style="margin:0 0 8px">Sample trade \u2014 remove samples from the footer any time.</p>':'')+rows+note+closeForm+
+    '<div class="drawer-actions"><button class="btn btn-terra btn-sm" id="deleteTrade" type="button">Delete trade</button></div>';
+  drawer.classList.add('show');
+  var del=$('#deleteTrade');
+  if(del)del.addEventListener('click',function(){
+    state.trades=state.trades.filter(function(x){return x.id!==t.id;});
+    save();closeDrawer();renderAll();toast('Trade deleted.');
+  });
+  var cf=$('#closeForm');
+  if(cf)cf.addEventListener('submit',function(e){
+    e.preventDefault();
+    var v=parseFloat($('#closeExit').value);
+    if(isNaN(v)){toast('Enter an exit price first.');return;}
+    t.exit=v;save();closeDrawer();renderAll();toast('Trade closed at '+v.toLocaleString('en-US',{minimumFractionDigits:2})+'.');
+  });
+}
+function closeDrawer(){if(drawer)drawer.classList.remove('show');}
+if(drawer){
+  $('#drawerClose').addEventListener('click',closeDrawer);
+  $('#drawerVeil').addEventListener('click',closeDrawer);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer();});
+}
+/* ---------- add trade ---------- */
+var addDir='Long';
+function setAddDir(d){
+  addDir=d;
+  var l=$('#fDirLong'),s=$('#fDirShort');
+  if(l)l.className=d==='Long'?'on-long':'';if(s)s.className=d==='Short'?'on-short':'';
+}
+var fdl=$('#fDirLong'),fds=$('#fDirShort');
+if(fdl)fdl.addEventListener('click',function(){setAddDir('Long');});
+if(fds)fds.addEventListener('click',function(){setAddDir('Short');});
+var addForm=$('#addForm');
+if(addForm){
