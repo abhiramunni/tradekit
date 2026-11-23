@@ -169,3 +169,60 @@ table.ledger{width:100%;border-collapse:collapse;font-size:14.5px}
 .band .band-text h2{color:#faf3e7;font-size:30px;margin:8px 0 10px}
 .band .band-text p{color:#e8dcc4;margin:0 0 18px}
 footer{margin-top:52px;border-top:1px solid var(--line);padding:26px 0 40px;color:var(--mut);font-size:13.5px}
+footer .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+footer .btns{display:flex;gap:8px;flex-wrap:wrap}
+/* drawer */
+#drawer{position:fixed;inset:0;z-index:70;display:none}
+#drawer.show{display:block}
+.drawer-veil{position:absolute;inset:0;background:rgba(23,16,8,.5)}
+.drawer-card{position:absolute;right:0;top:0;bottom:0;width:min(430px,94vw);background:var(--paper);overflow:auto;padding:24px;box-shadow:-20px 0 60px rgba(0,0,0,.25);animation:slideIn .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes slideIn{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
+.drawer-card h3{margin:4px 0 2px;font-size:24px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.kv b{text-align:right}
+.drawer-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+/* toast + coach */
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,80px);z-index:80;background:var(--ink);color:var(--paper);padding:12px 20px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;transition:all .3s ease;pointer-events:none;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#coach{position:fixed;inset:0;z-index:85;background:rgba(23,16,8,.55);display:none;align-items:flex-end;justify-content:center;padding:20px}
+#coach.show{display:flex}
+.coach-card{background:var(--paper);border-radius:22px;max-width:480px;width:100%;padding:26px;box-shadow:var(--shadow-lg);animation:rise .35s cubic-bezier(.2,.8,.2,1)}
+.coach-card h3{font-size:24px;margin:6px 0 8px}
+.coach-card p{color:var(--ink2);margin:0 0 18px}
+.coach-dots{display:flex;gap:6px;margin-bottom:18px}
+.coach-dots i{width:26px;height:5px;border-radius:99px;background:var(--line2)}
+.coach-dots i.on{background:var(--bronze)}
+.coach-btns{display:flex;gap:10px;justify-content:space-between}
+/* responsive */
+@media (max-width:900px){
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .split{grid-template-columns:1fr}
+  .guides{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mast nav{display:none}
+}
+@media (max-width:560px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .guides{grid-template-columns:1fr}
+  .hero-cards{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .risk-out{grid-template-columns:1fr}
+  .ledger-scroll{overflow-x:auto}
+  .net-chip{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-photo img,.band img{animation:none}
+  #intro .intro-bar i{animation-duration:.4s}
+}
+</style>
+</head>
+<body>
+<div id="intro" role="button" tabindex="0" aria-label="Skip intro">
+  <div class="intro-mark">TK</div>
+  <div class="intro-title">TradeKit</div>
+  <div class="intro-tag">Your trading journal &amp; risk desk</div>
+  <div class="intro-bar"><i></i></div>
+  <button class="intro-skip" id="introSkip" type="button">Tap anywhere to skip</button>
+</div>
+
+<div id="coach" role="dialog" aria-modal="true" aria-label="Quick tour">
