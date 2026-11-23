@@ -684,3 +684,61 @@ if(fdl)fdl.addEventListener('click',function(){setAddDir('Long');});
 if(fds)fds.addEventListener('click',function(){setAddDir('Short');});
 var addForm=$('#addForm');
 if(addForm){
+
+  var fd=$('#fDate');if(fd&&!fd.value)fd.value=todayKey();
+  addForm.addEventListener('submit',function(e){
+    e.preventDefault();
+    var entry=parseFloat($('#fEntry').value),sl=parseFloat($('#fSL').value),size=parseFloat($('#fSize').value);
+    var exitRaw=$('#fExit').value.trim(),exit=exitRaw===''?null:parseFloat(exitRaw);
+    var tpRaw=$('#fTP').value.trim(),tp=tpRaw===''?null:parseFloat(tpRaw);
+    var date=$('#fDate').value,symbol=$('#fSymbol').value.trim().toUpperCase()||'XAUUSD';
+    var note=$('#fNote').value.trim();
+    if(!date){toast('Pick a date for the trade.');return;}
+    if(isNaN(entry)||isNaN(sl)||isNaN(size)||size<=0){toast('Entry, stop-loss and a size above zero are needed.');return;}
+    if(entry===sl){toast('Entry and stop-loss cannot be the same price.');return;}
+    if(exit!=null&&isNaN(exit)){toast('That exit price does not look right.');return;}
+    state.trades.push({id:'t'+Date.now(),date:date,symbol:symbol,dir:addDir,entry:entry,exit:exit,size:size,sl:sl,tp:tp,note:note,sample:false});
+    save();renderAll();
+    addForm.reset();if(fd)fd.value=todayKey();var fs=$('#fSymbol');if(fs)fs.value='XAUUSD';var fz=$('#fSize');if(fz)fz.value='0.10';setAddDir('Long');
+    toast(exit==null?'Open trade saved. Close it from the ledger when you exit.':'Trade saved.');
+    safeScroll($('#ledger'));
+  });
+}
+var blt=$('#btnLogTrade');
+if(blt)blt.addEventListener('click',function(){safeScroll($('#addPanel'));var fe=$('#fEntry');if(fe){try{fe.focus({preventScroll:true});}catch(e){}}});
+/* ---------- risk calculator ---------- */
+var calcDir='Long';
+function setCalcDir(d){
+  calcDir=d;
+  var l=$('#rDirLong'),s=$('#rDirShort');
+  if(l)l.className=d==='Long'?'on-long':'';if(s)s.className=d==='Short'?'on-short':'';
+}
+var rdl=$('#rDirLong'),rds=$('#rDirShort');
+if(rdl)rdl.addEventListener('click',function(){setCalcDir('Long');calcRisk();});
+if(rds)rds.addEventListener('click',function(){setCalcDir('Short');calcRisk();});
+function calcRisk(){
+  var acc=parseFloat($('#rAccount').value),pct=parseFloat($('#rRisk').value);
+  var entry=parseFloat($('#rEntry').value),stop=parseFloat($('#rStop').value),target=parseFloat($('#rTarget').value);
+  var ra=$('#rRiskAmt'),sz=$('#rSize'),rr=$('#rRR'),wd=$('#rWords');
+  if(isNaN(acc)||isNaN(pct)||isNaN(entry)||isNaN(stop)||acc<=0||pct<=0){
+    if(ra)ra.textContent='\u2014';if(sz)sz.textContent='\u2014';if(rr)rr.textContent='\u2014';
+    if(wd)wd.textContent='Fill in account size, risk %, entry and stop to size the trade.';
+    return null;
+  }
+  var dist=Math.abs(entry-stop);
+  if(dist===0){
+    if(ra)ra.textContent='\u2014';if(sz)sz.textContent='\u2014';if(rr)rr.textContent='\u2014';
+    if(wd)wd.textContent='Entry and stop cannot be the same price \u2014 move the stop away from the entry.';
+    return null;
+  }
+  var risk$=acc*pct/100,oz=risk$/dist,lots=oz/100;
+  var reward=isNaN(target)?null:Math.abs(target-entry);
+  var ratio=reward==null?null:reward/dist;
+  if(ra)ra.textContent=money(risk$);
+  if(sz)sz.textContent=lots.toFixed(2)+' lots';
+  if(rr)rr.textContent=ratio==null?'\u2014':ratio.toFixed(1)+' : 1';
+  var warn='';
+  if(!isNaN(target)){
+    if(calcDir==='Long'&&target<=entry)warn=' Your target sits below your entry for a long \u2014 check the numbers.';
+    if(calcDir==='Short'&&target>=entry)warn=' Your target sits above your entry for a short \u2014 check the numbers.';
+  }
