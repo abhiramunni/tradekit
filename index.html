@@ -340,3 +340,60 @@ footer .btns{display:flex;gap:8px;flex-wrap:wrap}
           <div class="field"><label for="fDate">Date</label><input id="fDate" type="date" required></div>
           <div class="field"><label for="fSymbol">Symbol</label><input id="fSymbol" type="text" value="XAUUSD" maxlength="12" required></div>
           <div class="field"><label>Direction</label>
+            <div class="dir-toggle" role="group" aria-label="Direction">
+              <button type="button" id="fDirLong" class="on-long">Long</button>
+              <button type="button" id="fDirShort">Short</button>
+            </div>
+          </div>
+          <div class="field"><label for="fSize">Size (lots)</label><input id="fSize" type="number" step="0.01" min="0.01" value="0.10" required></div>
+          <div class="field"><label for="fEntry">Entry price</label><input id="fEntry" type="number" step="0.01" placeholder="e.g. 4142.30" required></div>
+          <div class="field"><label for="fExit">Exit price <span style="text-transform:none;letter-spacing:0">(blank = open)</span></label><input id="fExit" type="number" step="0.01" placeholder="Leave blank if open"></div>
+          <div class="field"><label for="fSL">Stop-loss</label><input id="fSL" type="number" step="0.01" placeholder="e.g. 4130.00" required></div>
+          <div class="field"><label for="fTP">Target</label><input id="fTP" type="number" step="0.01" placeholder="e.g. 4165.00"></div>
+          <div class="field full"><label for="fNote">Why did you take it? (one honest line)</label><input id="fNote" type="text" maxlength="140" placeholder="e.g. H4 trend up, M15 pullback entry"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-gold" type="submit">Save trade</button>
+          <span class="form-note" id="formNote">P&amp;L and R are worked out from entry, exit and stop — you never type them.</span>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+<section id="risk">
+  <div class="wrap">
+    <div class="sec-head"><h2>The risk desk</h2></div>
+    <p class="helper">Decide how much you are willing to lose first — the desk works out the size. For gold, 1 lot is 100 oz, so a $1 move is $100 per lot.</p>
+    <div class="split">
+      <div class="card risk">
+        <h3>Position size calculator</h3>
+        <p class="small muted" style="margin:0 0 6px">Same maths for any market: risk ÷ distance to your stop = size.</p>
+        <div class="form-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+          <div class="field"><label for="rAccount">Account size ($)</label><input id="rAccount" type="number" step="1" min="1" value="2000"></div>
+          <div class="field"><label for="rRisk">Risk per trade (%)</label><input id="rRisk" type="number" step="0.1" min="0.1" max="10" value="1"></div>
+          <div class="field"><label for="rEntry">Entry price</label><input id="rEntry" type="number" step="0.01" value="4140.00"></div>
+          <div class="field"><label for="rStop">Stop-loss</label><input id="rStop" type="number" step="0.01" value="4128.00"></div>
+          <div class="field"><label for="rTarget">Target</label><input id="rTarget" type="number" step="0.01" value="4164.00"></div>
+          <div class="field"><label>Direction</label>
+            <div class="dir-toggle" role="group" aria-label="Calculator direction">
+              <button type="button" id="rDirLong" class="on-long">Long</button>
+              <button type="button" id="rDirShort">Short</button>
+            </div>
+          </div>
+        </div>
+        <div class="risk-out">
+          <div class="ro"><div class="lbl">You risk</div><div class="val num" id="rRiskAmt">—</div></div>
+          <div class="ro"><div class="lbl">Position size</div><div class="val num" id="rSize">—</div></div>
+          <div class="ro"><div class="lbl">Reward : risk</div><div class="val num" id="rRR">—</div></div>
+        </div>
+        <p class="risk-words" id="rWords">—</p>
+      </div>
+      <div class="card risk" id="discipline">
+        <h3>Today's discipline check</h3>
+        <p class="small muted" style="margin:0 0 6px"><span id="chkDone">0 of 6 done</span> — tick them before you trade, not after.</p>
+        <div class="check-list" id="checkList"></div>
+        <div style="margin-top:18px">
+          <h3 style="font-size:19px">Today's journal note</h3>
+          <p class="small muted" style="margin:0 0 8px">One line about the session. Mood, market, what you noticed.</p>
+          <div class="journal">
+            <textarea id="journalText" maxlength="500" placeholder="e.g. Gold choppy into London open. Waited, took one clean setup."></textarea>
