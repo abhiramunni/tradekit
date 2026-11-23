@@ -112,3 +112,60 @@ section{padding:44px 0 8px}
 .chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .ledger-count{margin-left:auto;font-size:13px;color:var(--mut)}
 table.ledger{width:100%;border-collapse:collapse;font-size:14.5px}
+.ledger th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);padding:10px 12px;border-bottom:2px solid var(--line)}
+.ledger td{padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.ledger tbody tr{cursor:pointer;transition:background .12s}
+.ledger tbody tr:hover{background:var(--paper2)}
+.ledger .sym{font-weight:800}
+.ledger .date{color:var(--mut);font-size:13px}
+.r-badge{font-weight:800;font-size:14px}
+.empty{padding:34px 20px;text-align:center;color:var(--mut)}
+/* add trade form */
+.add-panel{margin-top:16px;padding:20px}
+.add-panel h3{margin:0 0 4px;font-size:20px}
+.form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}
+.field label{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line2);border-radius:12px;background:#fffdf7;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--bronze);box-shadow:0 0 0 3px rgba(176,125,43,.18)}
+.field.full{grid-column:1/-1}
+.dir-toggle{display:flex;border:1.5px solid var(--line2);border-radius:12px;overflow:hidden}
+.dir-toggle button{flex:1;padding:11px 0;border:0;background:#fffdf7;font-weight:700;font-size:14px;color:var(--ink2)}
+.dir-toggle button.on-long{background:var(--gold-soft);color:var(--gold-deep)}
+.dir-toggle button.on-short{background:var(--terra-soft);color:var(--terra-d)}
+.form-actions{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.form-note{font-size:13px;color:var(--mut)}
+
+/* ---------- risk desk + two-col ---------- */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.risk{padding:22px}
+.risk h3{margin:0 0 4px;font-size:22px}
+.risk-out{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+.risk-out .ro{background:var(--paper2);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.risk-out .lbl{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.risk-out .val{font-family:Fraunces,serif;font-size:24px;font-weight:800;margin-top:3px}
+.risk-words{margin:14px 0 0;font-size:14.5px;background:var(--gold-soft);border-radius:12px;padding:12px 14px;color:#5c4510}
+/* discipline + journal */
+.check-list{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.check-item{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);cursor:pointer;text-align:left;width:100%;font-size:15px}
+.check-item .box{flex:0 0 auto;width:22px;height:22px;border-radius:7px;border:2px solid var(--line2);margin-top:1px;display:flex;align-items:center;justify-content:center;color:#fff}
+.check-item.done .box{background:var(--bronze);border-color:var(--bronze)}
+.check-item.done{color:var(--mut)}
+.check-item.done .ctext{text-decoration:line-through}
+.journal textarea{width:100%;min-height:120px;padding:12px;border:1.5px solid var(--line2);border-radius:12px;background:#fffdf7;resize:vertical;outline:none}
+.journal textarea:focus{border-color:var(--bronze);box-shadow:0 0 0 3px rgba(176,125,43,.18)}
+/* guides */
+.guides{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.guide{padding:18px;text-align:left;width:100%;cursor:pointer}
+.guide h3{margin:0 0 6px;font-size:18px}
+.guide p{margin:0;color:var(--ink2);font-size:14px}
+.guide .more{display:none;margin-top:10px;font-size:14px;color:var(--ink2);border-top:1px dashed var(--line2);padding-top:10px}
+.guide.open .more{display:block}
+.guide .tap{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--bronze)}
+/* photo band + footer */
+.band{margin-top:48px;border-radius:28px;overflow:hidden;position:relative;min-height:260px}
+.band img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;animation:kenburns 30s ease-in-out infinite alternate}
+.band .band-veil{position:absolute;inset:0;background:linear-gradient(90deg,rgba(23,16,8,.72),rgba(23,16,8,.25))}
+.band .band-text{position:relative;padding:44px 34px;color:#faf3e7;max-width:520px}
+.band .band-text h2{color:#faf3e7;font-size:30px;margin:8px 0 10px}
+.band .band-text p{color:#e8dcc4;margin:0 0 18px}
+footer{margin-top:52px;border-top:1px solid var(--line);padding:26px 0 40px;color:var(--mut);font-size:13.5px}
