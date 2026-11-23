@@ -511,3 +511,60 @@ function stats(){
   var c=closedTrades(),wins=0,gw=0,gl=0,rs=0;
   c.forEach(function(t){var p=pnl(t);if(p>0){wins++;gw+=p;}else if(p<0){gl+= -p;}var r=rMult(t);if(r!=null) rs+=r;});
   var net=c.reduce(function(a,t){return a+pnl(t);},0);
+  var streak=0,streakDir=null;
+  for(var i=c.length-1;i>=0;i--){var p=pnl(c[i]);var dir=p>0?'win':(p<0?'loss':'flat');if(streakDir===null){streakDir=dir;streak=1;}else if(dir===streakDir){streak++;}else{break;}}
+  return {closed:c.length,total:state.trades.length,open:state.trades.length-c.length,net:net,
+    wins:wins,winRate:c.length?Math.round(wins/c.length*100):0,
+    pf:gl>0?gw/gl:(gw>0?Infinity:0),avgR:c.length?rs/c.length:0,
+    avgWin:wins?gw/wins:0,avgLoss:(c.length-wins)?gl/(c.length-wins):0,
+    streak:streak,streakDir:streakDir};
+}
+function toast(msg){var t=$('#toast');if(!t) return;t.textContent=msg;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('show');},2600);}
+function safeScroll(el){try{if(el&&el.scrollIntoView) el.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}}
+/* ---------- intro + coach ---------- */
+var intro=$('#intro');
+function hideIntro(){if(!intro||intro.classList.contains('hide'))return;intro.classList.add('hide');state.seenIntro=true;save();setTimeout(maybeCoach,650);}
+if(intro){
+  if(state.seenIntro) intro.classList.add('quick');
+  var delay=state.seenIntro?900:3800;
+  setTimeout(hideIntro,delay);
+  intro.addEventListener('click',hideIntro);
+  intro.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();hideIntro();}});
+}
+var COACH=[
+ {k:'Step 1 of 3',t:'Log every trade, win or lose',x:'A journal turns random trades into a record you can learn from. Add a trade in ten seconds \u2014 entry, exit, size and why.'},
+ {k:'Step 2 of 3',t:'Size from risk, not from hope',x:'The risk desk works out your position size from the amount you are willing to lose. Pick the risk first, and the size follows.'},
+ {k:'Step 3 of 3',t:'Review, then repeat',x:'Your equity curve and win rate are honest because they come from your own log. Check them every Sunday and trade the plan, not the mood.'}
+];
+var coachStep=0,coachEl=$('#coach');
+function maybeCoach(){if(state.seenCoach||!coachEl)return;coachStep=0;renderCoach();coachEl.classList.add('show');}
+function renderCoach(){var s=COACH[coachStep];$('#coachKicker').textContent=s.k;$('#coachTitle').textContent=s.t;$('#coachText').textContent=s.x;$$('#coach .coach-dots i').forEach(function(d,i){d.classList.toggle('on',i<=coachStep);});$('#coachNext').textContent=coachStep===COACH.length-1?'Start journaling':'Next';}
+function closeCoach(){if(!coachEl)return;coachEl.classList.remove('show');state.seenCoach=true;save();}
+if(coachEl){
+  $('#coachNext').addEventListener('click',function(){if(coachStep<COACH.length-1){coachStep++;renderCoach();}else{closeCoach();}});
+  $('#coachSkip').addEventListener('click',closeCoach);
+}
+/* ---------- stats + equity ---------- */
+function renderStats(){
+  var s=stats();
+  var netTxt=money(s.net);
+  var chip=$('#netChip');if(chip){chip.textContent=netTxt;chip.className='val num '+(s.net>=0?'win':'loss');}
+  var hn=$('#heroNet');if(hn){hn.textContent=netTxt;hn.className='val num '+(s.net>=0?'win':'loss');}
+  var hw=$('#heroWin');if(hw){hw.textContent=s.closed?s.winRate+'%':'\u2014';}
+  var hws=$('#heroWinSub');if(hws){hws.textContent=s.closed?s.wins+' wins out of '+s.closed+' closed trades':'Log your first trade to begin.';}
+  var hns=$('#heroNetSub');if(hns){hns.textContent=s.open?s.open+' open trade'+(s.open>1?'s':'')+' not counted yet':'Across your closed trades';}
+  function set(id,txt,cls){var el=$(id);if(el){el.textContent=txt;if(cls)el.className=el.className.replace(/\b(win|loss)\b/g,'').trim()+' '+cls;}}
+  set('#stNet',netTxt,s.net>=0?'win':'loss');
+  set('#stWin',s.closed?s.winRate+'%':'\u2014');
+  set('#stPF',s.closed?(s.pf===Infinity?'\u221e':s.pf.toFixed(2)):'\u2014');
+  set('#stAvgR',s.closed?(s.avgR>=0?'+':'')+s.avgR.toFixed(2)+'R':'\u2014',s.avgR>=0?'win':'loss');
+  set('#stTrades',String(s.total));
+  var sws=$('#stWinSub');if(sws)sws.textContent=s.closed?s.wins+' wins \u00b7 '+(s.closed-s.wins)+' losses':'No closed trades yet';
+  var sts=$('#stTradesSub');if(sts)sts.textContent=s.open?s.open+' open \u00b7 '+s.closed+' closed':'All closed';
+  var stk=$('#stStreak');if(stk){stk.textContent=s.closed?s.streak+' '+(s.streakDir==='win'?'win':s.streakDir==='loss'?'loss':'flat')+(s.streak>1?'s':''):'\u2014';stk.className='val num '+(s.streakDir==='win'?'win':s.streakDir==='loss'?'loss':'');}
+  var eb=$('#eqBig');if(eb){eb.textContent=netTxt;eb.className='big num '+(s.net>=0?'win':'loss');}
+  var ec=$('#eqCaption');if(ec){ec.textContent=s.closed?'Cumulative P&L after '+s.closed+' closed trades.':'Log a closed trade to draw the curve.';}
+}
+function renderEquity(){
+  var cv=$('#eqCanvas');if(!cv)return;
+  var ctx=null;try{ctx=cv.getContext('2d');}catch(e){}
