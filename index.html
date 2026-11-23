@@ -742,3 +742,61 @@ function calcRisk(){
     if(calcDir==='Long'&&target<=entry)warn=' Your target sits below your entry for a long \u2014 check the numbers.';
     if(calcDir==='Short'&&target>=entry)warn=' Your target sits above your entry for a short \u2014 check the numbers.';
   }
+
+  if(wd)wd.textContent='Risking '+money(risk$)+' to '+(ratio==null?'an open target':('make about '+money(reward*oz)+' at '+ratio.toFixed(1)+' to 1'))+'. That is '+oz.toFixed(2)+' oz of gold ('+lots.toFixed(2)+' lots).'+warn;
+  return {risk:risk$,oz:oz,lots:lots,ratio:ratio};
+}
+['rAccount','rRisk','rEntry','rStop','rTarget'].forEach(function(id){
+  var el=document.getElementById(id);
+  if(el)el.addEventListener('input',calcRisk);
+});
+/* ---------- discipline + journal ---------- */
+function renderChecks(){
+  var key=todayKey();
+  var done=state.checks[key]||[false,false,false,false,false,false];
+  var list=$('#checkList');if(!list)return;
+  list.innerHTML='';
+  CHECKS.forEach(function(text,i){
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='check-item'+(done[i]?' done':'');
+    b.innerHTML='<span class="box">'+(done[i]?'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>':'')+'</span><span class="ctext">'+esc(text)+'</span>';
+    b.addEventListener('click',function(){
+      var cur=state.checks[key]||[false,false,false,false,false,false];
+      cur[i]=!cur[i];state.checks[key]=cur;save();renderChecks();
+    });
+    list.appendChild(b);
+  });
+  var cd=$('#chkDone');if(cd)cd.textContent=done.filter(Boolean).length+' of 6 done';
+}
+var jt=$('#journalText');
+if(jt){
+  jt.value=state.journal[todayKey()]||'';
+  jt.addEventListener('input',function(){
+    state.journal[todayKey()]=jt.value;save();
+    var js=$('#journalSaved');if(js)js.textContent='Saved on this device just now.';
+  });
+}
+/* ---------- guides ---------- */
+var gg=$('#guidesGrid');
+if(gg){
+  GUIDES.forEach(function(g){
+    var b=document.createElement('button');
+    b.type='button';b.className='card guide';
+    b.innerHTML='<span class="tap">Tap to read</span><h3>'+esc(g.t)+'</h3><p>'+esc(g.s)+'</p><span class="more">'+esc(g.m)+'</span>';
+    b.addEventListener('click',function(){b.classList.toggle('open');});
+    gg.appendChild(b);
+  });
+}
+/* ---------- copy / samples / erase ---------- */
+function summaryText(){
+  var s=stats();
+  var lines=['TradeKit summary \u2014 '+todayKey(),
+    'Closed trades: '+s.closed+' ('+s.wins+' wins, '+(s.closed-s.wins)+' losses) \u00b7 Open: '+s.open,
+    'Net P&L: '+money(s.net)+' \u00b7 Win rate: '+(s.closed?s.winRate+'%':'n/a')+' \u00b7 Profit factor: '+(s.closed?(s.pf===Infinity?'\u221e':s.pf.toFixed(2)):'n/a')+' \u00b7 Avg R: '+(s.closed?s.avgR.toFixed(2)+'R':'n/a'),
+    'Avg win '+money(s.avgWin)+' \u00b7 Avg loss '+money(-s.avgLoss)];
+  closedTrades().slice(-5).forEach(function(t){
+    lines.push(fmtDate(t.date)+' '+t.symbol+' '+t.dir+' '+Number(t.entry).toFixed(2)+' \u2192 '+Number(t.exit).toFixed(2)+' \u00b7 '+signedMoney(pnl(t)));
+  });
+  return lines.join('\n');
+}
